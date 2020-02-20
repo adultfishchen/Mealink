@@ -1,0 +1,43 @@
+<%- include ("partials/header") %>
+
+<script type="text/javascript">
+      (document).ready(function(){
+        ('.showPassword').on('change',function(){
+          var isChecked = (this).prop('checked');
+          if (isChecked) {
+            ('.my-password').attr('type','text');
+          } else {
+            ('.my-password').attr('type','Password');
+          }
+        });
+      });
+</script>
+
+<div id="loginPage" class="container">
+	<h1> Login page </h1>
+</div>
+
+
+<div class="container">
+	<form action="/login" method="post">
+		<label for="email">Email Address</label>
+		<input type="emai;" name="email" placeholder="Eamil Address" 
+		id="email" required>
+		<label for="password">Password</label>
+    	<input type="password" name="password" id="password"
+		placeholder="Password" required class="my-password" >
+		<input type="checkbox" class="showPassword">Show Password
+		<p><label for="confirmPassword">Confirm Password</label>
+	    <input type="password" id="confirmPassword" name="confirmPassword" 
+	    placeholder="Confirm Password" class="my-password" required>
+		<input type="checkbox" class="showPassword">Show Password
+		<button id= "login" type="submit">Login</button>
+	</form>
+</div>
+
+
+<button><a href="/forgot">Forget Password</a></button>
+<button><a href="/register">Not a member, click here to register</a></button>
+
+<%- include ("partials/footer") %>
+			

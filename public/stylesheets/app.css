@@ -1,0 +1,33 @@
+#landingPage {
+	background: url("https://www.ntust.edu.tw/ezfiles/126/1126/randimg/ad_2433_3291232_62503.jpg")
+	no-repeat center center fixed;
+  	background-size: cover;
+}
+
+#landingPage {
+	padding-top: 20px;
+}
+
+#editPage {
+	padding-top: 30px;
+}
+
+#indexPage {
+	padding-top: 30px;
+}
+
+#registerPage {
+	padding-top: 30px;
+}
+
+#showPage {
+	padding-top: 30px;
+}
+
+#loginPage {
+	padding-top: 30px;
+}
+
+#headerAlert {
+	padding-top: 50px;
+}
