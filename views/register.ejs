@@ -1,19 +1,5 @@
 <%- include ("partials/header") %>
 
-<script type="text/javascript">
-      (document).ready(function(){
-        ('.showPassword').on('change',function(){
-          var isChecked = (this).prop('checked');
-          if (isChecked) {
-            ('.my-password').attr('type','text');
-          } else {
-            ('.my-password').attr('type','Password');
-          }
-        });
-      });
-  </script>
-
-
 <div id="registerPage" class="container">
 	<h1>Sign Up</h1>
 </div>
@@ -31,12 +17,10 @@
 	pattern ="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}" 
 	title="Password must between 6 and 20 characters and must include at least 
 	1 number, 1 lowercase and 1 uppercase letter." class="my-password" required>
-	<input type="checkbox" class="showPassword">Show Password</p>
 	
 	<p><label for="confirmPassword">Confirm Password</label>
 	<input type="password" id="confirmPassword" name="confirmPassword" 
 	placeholder="Confirm Password" class="my-password" required>
-	<input type="checkbox" class="showPassword">Show Password</p>
 	
 	<button type="submit" class="btn btn-sm btn-success">Register Now</button>
 </form>
