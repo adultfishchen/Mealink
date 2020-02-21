@@ -7,8 +7,8 @@ var UserSchema = new mongoose.Schema({
 	email: { type: String, unique: true, required: true},
 	avatar:{ type: String, default: "/uploads/image.jpg"},
 	password: String,
-	department: String,
-	introduction: String,
+	department: { type: String, default: "My major"},
+	introduction: { type: String, default: "Hello~I'm...."},
 	interest: String,
 	resetPasswordToken: String,
 	resetPasswordExpires: Date

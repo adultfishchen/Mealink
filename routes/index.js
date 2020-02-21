@@ -92,7 +92,7 @@ router.post("/api/register", function(req, res){
 			}
 			passport.authenticate("local")(req, res, function() {
 				res.status(200).send({
-					message:"register success",
+					message:{user:user},
 					status: "success"
 				});
 			});
@@ -158,9 +158,8 @@ router.post("/api/login", function(req, res){
 					status: "fail"
 				});
 	}
-	
 	res.status(200).send({
-					message:user._id,
+					message:{user:user},
 					status: "success"
 				});
   })(req, res);
@@ -603,7 +602,14 @@ router.post("/api/reset/:token", (req, res) => {
 	});			
 });
 
-
+//get time
+router.get("/api/time", function(req, res){
+	var d = new Date().toLocaleString('zh-TW', {timeZone: 'Asia/Taipei'});
+	res.status(200).send({
+							message:{time:d},
+							status: "success"
+						});
+});
 
 //chatroom routes
 router.get("/chat", function(req, res){
