@@ -604,7 +604,7 @@ router.post("/api/reset/:token", (req, res) => {
 
 //get time
 router.get("/api/time", function(req, res){
-	var d = new Date().toLocaleString('zh-TW', {timeZone: 'Asia/Taipei'});
+	var d = new Date().toLocaleString('zh-TW', {timeZone: 'Asia/Taipei',hour12: false});
 	res.status(200).send({
 							message:{time:d},
 							status: "success"
