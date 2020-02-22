@@ -299,14 +299,7 @@ User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) 
 	});
 });
     
-router.put("/api/users/:id", upload.single("user[avatar]"), function(req, res, next) {
-  if (!user) {
-    res.status(401).send({
-					message:"user was not found",
-					status: "fail"
-				});
-  return ;
-}
+router.put("/api/users/:id",upload.single("user[avatar]"), function(req, res, next) {
 	if(req.file !== undefined)
 		req.body.user.avatar = "/uploads/" + req.file.filename;
 User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   

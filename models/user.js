@@ -9,7 +9,6 @@ var UserSchema = new mongoose.Schema({
 	password: String,
 	department: { type: String, default: "My major"},
 	introduction: { type: String, default: "Hello~I'm...."},
-	interest: String,
 	resetPasswordToken: String,
 	resetPasswordExpires: Date
 });
