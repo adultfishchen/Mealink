@@ -288,7 +288,7 @@ var upload = multer({
 //Update User PUT 
 router.put("/users/:id", middleware.checkUserOwnership, upload.single("user[avatar]"), function(req, res, next) {
 	if(req.file !== undefined)
-		req.body.user.avatar = "/uploads/" + req.file.filename;
+		req.user.avatar = req.file.buffer;
 User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
 	if(err) {
 			req.flash("error", "Something went wrong, please try again");

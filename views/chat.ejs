@@ -1,36 +1,88 @@
 <%- include ("partials/header") %>
 
-      <!-- 中部主要聊天訊息 -->
-      <div class="chat history container">
-        <!-- 對話氣泡 -->
-        <div class="ts speeches">
-          <!-- appendChild from app.js -->
-        </div>
-        <!-- / 對話氣泡 -->
-      </div>
-      <!-- / 中部主要聊天訊息 -->
+    <div id="nickWrap">
+   <p>Enter a username: </p>
+   <p id="nickError"></p>
+<form id="setNick">
+	<input size="10" id="nickname"></input>
+	<input type="submit"></input>
+</form>
+</div>
 
-      <!-- 底部輸入欄位 -->
-      <div class="sent message container">
-        <div class="ts grid">
-          <div class="stretched column">
-            <div class="ts fluid input">
-              <input placeholder="在此輸入文字⋯⋯" />
-            </div>
-          </div>
-          <div class="column">
-            <div id="btnAddMsg" class="ts button info">
-              <i class="icon chat"></i>送出</div>
-          </div>
-        </div>
-      </div>
-      <!-- / 底部輸入欄位 -->
-    </div>
-    <!-- / 左側欄位 -->
-  </div>
-  <!-- / 主要容器網格系統 -->
-</body>
-<script src='./js/sign.js'></script>
-<script src='./js/app.js'></script>
 
-</html>
+
+<div id="contentWrap">
+<div id="chatWrap">
+<div id= "chat"></div>
+<form id="send-message">
+	<input size="100" id="message"></input>
+	<input type="submit"></input>
+</form>
+</div>
+<div id="users"></div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+	jQuery(function($){
+		var socket = io.connect();
+		var $nickForm = $('#setNick');
+		var $nickError = $('#nickError');
+		var $nickBox = $('#nickname');
+		var $users = $('#users');
+		var $messageForm = $('#send-message');
+		var $messageBox = $('#message');
+		var $chat = $('#chat');
+
+
+		$nickForm.submit(function(e){
+		  e.preventDefault();
+		  socket.emit('new user', $nickBox.val(), function(data){
+			if(data){
+			   $('#nickWrap').hide();
+			   $('#contentWrap').show();
+} else{
+	$nickError.html("<p>This name is already taken!</p>");
+
+	}
+});
+
+$nickBox.val('');
+});
+
+		socket.on('usernames', function(data){
+		 var html = '';
+		 for(var i=0; i<data.length;i++){
+		 html+=data[i] + "<br/>"
+}
+		 $users.html(html);
+})
+
+		$messageForm.submit(function(e){
+			e.preventDefault();
+			socket.emit('send message', $messageBox.val(), function(data){
+			$chat.append("<span class = error>" + data + "</span><br/>");
+});
+			$messageBox.val('');
+		});
+
+socket.on('load old msgs', function(docs){
+		  for (var i =docs.length-1; i>=0; i--){
+		displayMsg(docs[i]);
+}
+});
+
+		socket.on('new message', function(data){
+		  displayMsg(data);
+});
+
+		function displayMsg(data){
+	$chat.append("<span class = msg><b>" + data.nick + ":</b> " + data.msg + "</span><br/>");
+}
+
+ 		socket.on('whisper', function(data){
+		  $chat.append("<span class="whisper"><b>" + data.nick + ":</b> " + data.msg + "</span><br/>");
+});
+		
+	});
+<%- include ("partials/footer") %>

@@ -5,7 +5,7 @@ var passportLocalMongoose = require("passport-local-mongoose");
 var UserSchema = new mongoose.Schema({
     username: { type: String, unique: true, required: true },
 	email: { type: String, unique: true, required: true},
-	avatar:{ type: String, default: "/uploads/image.jpg"},
+	avatar:{ type: Buffer},
 	password: String,
 	department: { type: String, default: "My major"},
 	introduction: { type: String, default: "Hello~I'm...."},

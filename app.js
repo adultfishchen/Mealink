@@ -15,8 +15,8 @@ var express               = require("express"),
 	LocalStrategy         = require("passport-local"),
 	passportLocalMongoose = require("passport-local-mongoose"),
 	User                  = require("./models/user"),
-	server                = require("http").Server(app),
-    io                    = require("socket.io")(server),
+	server                = require("http").createServer(app),
+    io                    = require("socket.io").listen(server),
 	indexRoutes      	  = require("./routes/index");
 
 var url = process.env.DATABASEURL || "mongodb://localhost:27017/mealinktesting_project";
@@ -25,46 +25,6 @@ mongoose.connect(url,
  useUnifiedTopology: true, 
  useCreateIndex: true
 });
-
-io.on('connection', async (socket) => {
-
-  console.log('a user connected');
-  const clients = await io.engine.clientsCount;
-
-  const socketid = socket.id;
-
-  socketHander = new SocketHander();
-
-  socketHander.connect();
-
-  const history = await socketHander.getMessages();
-
-  io.to(socketid).emit('history', history);
-  io.to(socketid).emit('clients', {
-    clients: clients,
-  });
-
-  socket.on("disconnect", () => {
-    console.log("a user go out");
-    io.emit("clients", {
-      clients: clients - 1,
-    });
-  });
-
-  socket.on("message", (obj) => {
-    socketHander.storeMessages(obj);
-    io.emit("message", obj);
-  });
-
-  socket.on('clients', (obj) => {
-    io.emit("clients", {
-      clients: clients,
-      user: obj,
-    });
-  });
-
-});
-
 
 
 app.set("views", path.join(__dirname, "views"));
