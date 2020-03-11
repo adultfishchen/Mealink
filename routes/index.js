@@ -7,6 +7,7 @@ var express               = require("express"),
 	async				  = require("async"),
 	crypto				  = require("crypto"),
 	multer                = require("multer"),
+	Messages              = require("../models/Messages"),
 	User                  = require("../models/user");
 
 
@@ -131,7 +132,7 @@ router.get("/login", function(req, res){
 
 
 //Handle login logic 
-router.post("/login",  function(req, res, next) {
+router.post("/login", function(req, res, next) {
   passport.authenticate("local",
     {
 		successRedirect: "/",
@@ -174,8 +175,8 @@ router.get("/logout", function(req, res){
 });
 
 //card route
-router.get("/card", function(req, res) {
-	var catchusers = User.find().select('_id');
+router.get("/card", function(req, res) {	
+		var catchusers = User.find().select('_id');
 	// Get the count of all users
 	User.countDocuments().exec(function (err, count) {
 		// Get a random entry
@@ -188,12 +189,20 @@ router.get("/card", function(req, res) {
 				req.flash("error", "Something went wrong, please try again");
 			} else {
 				res.render("show", {user: result});	
-				console.log(result);
+				res.locals.user = req.user;
+				var u1 = req.user;
+				var nmessages = new Messages ({
+					user1: u1._id,
+					user2: result._id
+				});
+				console.log(nmessages);
 			}
-		});
-	});
-	
+			
+		}
+	)
+	});	
 });
+
 
 router.get("/api/card", function(req, res) {
 	var catchusers = User.find().select('_id');
@@ -221,8 +230,6 @@ router.get("/api/card", function(req, res) {
 	
 });
 
-
-
 //Show page
 router.get("/users/:id", function(req, res) {
 	User.findById(req.params.id, function(err, showUser) {
@@ -230,7 +237,6 @@ router.get("/users/:id", function(req, res) {
 			req.flash("error", "Something went wrong, please try again");
 		} else {
 			res.render("edit", {user: showUser});	
-			console.log(showUser);
 		}
 	});	
 	
@@ -261,7 +267,6 @@ router.get("/users/:id/edit", middleware.checkUserOwnership, function (req, res)
 			req.flash("error", "Something went wrong, please try again");
 		} else {
 			res.render("edit", {user: editUser});
-			console.log(editUser);
 		}
 	});
 });
@@ -288,7 +293,7 @@ var upload = multer({
 //Update User PUT 
 router.put("/users/:id", middleware.checkUserOwnership, upload.single("user[avatar]"), function(req, res, next) {
 	if(req.file !== undefined)
-		req.body.user.avatar = req.file.buffer
+		req.body.user.avatar = "/uploads/" + req.file.filename;
 User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
 	if(err) {
 			req.flash("error", "Something went wrong, please try again");
@@ -301,7 +306,7 @@ User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) 
     
 router.put("/api/users/:id",upload.single("user[avatar]"), function(req, res, next) {
 	if(req.file !== undefined)
-		req.body.user.avatar = req.file.buffer
+		req.body.user.avatar = "/uploads/" + req.file.filename;
 User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
 	if(err) {
 			res.status(401).send({
@@ -345,256 +350,6 @@ router.delete("/api/users/:id", middleware.checkUserOwnership, function(req, res
 	});
 });
 
-//Forgot passsword GET
-router.get("/forgot", function(req, res){
-	res.render("forget");
-});
-
-//Forgot password post
-router.post("/forgot", (req, res, next) => {
-	async.waterfall([ //This is an array of functions, called 1 after the other
-		(done) => {
-			crypto.randomBytes(20, (err, buf) => {
-				let token = buf.toString("hex");
-				done(err, token); //This is the token sent to the user
-			});
-		},
-		//Search for users email address
-		(token, done) => {
-			User.findOne({email: req.body.email}, (err, user) => {
-				if(!user) {
-					req.flash("error", "No account with that email address exists");
-					return res.redirect("/forget");
-				}
-				user.resetPasswordToken = token;
-				user.resetPasswordExpires = Date.now() + 360000; //1 hour
-				
-				user.save((err) => {
-					done(err, token, user);
-					});
-				});
-			},
-//Send the email to the user
-//Need HOTMAILPW=yourpassword node app.js to hide password, also install dotenv npm
-//Create a .gitignore file at root level, add .env to it, then add HOTMAILPW=your password.
-				(token, user, done) => {
-					const smtpTransport = nodemailer.createTransport( {
-   service: "gmail",
-   auth: {
-       user: "mealinkteam@gmail.com",
-       pass: process.env.GMAILPW
-   }
-});
-const mailOptions = {
-	to: user.email,
-	from: "MeaLink <mealinkteam@gmail.com>",
-	subject: "MeaLink App Password Reset",
-	text: "Hi " + user.email + "\n\n" + 
-	"A request to reset your MeaLink Site password has been made. If you did not make this request then simply ignore this email, but if you did make the request then please click on the following link, or copy & paste it into your browser to complete the process \n\n" +  "http://" + req.headers.host + "/reset/" + token + "\n\n" + "This token is valid for 60 minutes" + "\n\n" + 
-"Thanks the MeatLink Site team"
-	};
-		smtpTransport.sendMail(mailOptions, (err) => {
-			console.log("Email Sent");
-			req.flash("success", "An email has been sent to " + user.email + 
-			" with further instructions");
-				done (err, "done");
-				});
-			}
-		], (err) => {
-				if(err) return next(err);
-				res.redirect("/");
-	 });	
-});
-
-router.post("/api/forgot", (req, res, next) => {
-	async.waterfall([ //This is an array of functions, called 1 after the other
-		(done) => {
-			crypto.randomBytes(20, (err, buf) => {
-				let token = buf.toString("hex");
-				done(err, token); //This is the token sent to the user
-			});
-		},
-		//Search for users email address
-		(token, done) => {
-			User.findOne({email: req.body.email}, (err, user) => {
-				if(!user) {
-					res.status(401).send({
-					message:"No user found",
-					status: "fail"
-				});
-				}
-				user.resetPasswordToken = token;
-				user.resetPasswordExpires = Date.now() + 360000; //1 hour
-				
-				user.save((err) => {
-					done(err, token, user);
-				});
-				res.status(200).send({
-					message:{user: user},
-					status: "success"
-				});
-				});
-			},
-//Send the email to the user
-//Need HOTMAILPW=yourpassword node app.js to hide password, also install dotenv npm
-//Create a .gitignore file at root level, add .env to it, then add HOTMAILPW=your password.
-				(token, user, done) => {
-					
-					const smtpTransport = nodemailer.createTransport( {
-   service: "gmail",
-   auth: {
-       user: "mealinkteam@gmail.com",
-       pass: process.env.GMAILPW
-   }
-});
-const mailOptions = {
-	to: user.email,
-	from: "MeaLink <mealinkteam@gmail.com>",
-	subject: "MeaLink App Password Reset",
-	text: "Hi " + user.email + "\n\n" + 
-	"A request to reset your MeaLink Site password has been made. If you did not make this request then simply ignore this email, but if you did make the request then please click on the following link, or copy & paste it into your browser to complete the process \n\n" +  "http://" + req.headers.host + "/reset/" + token + "\n\n" + "This token is valid for 60 minutes" + "\n\n" + 
-"Thanks the MeatLink Site team"
-	};
-		smtpTransport.sendMail(mailOptions, (err) => {
-			console.log("Email Sent");
-			res.status(200).send({
-					message: {user: showUser},
-					status: "success"
-				});
-				done (err, "done");
-				});
-			}
-		], (err) => {
-				if(err) return next(err);
-				res.redirect("/");
-	 });	
-});
-
-
-//Reset password GET
-router.get("/reset/:token", (req, res) => {
-	User.findOne({resetPasswordToken: req.params.token, 
-	resetPasswordExpires: {$gt: Date.now()}}, (err, user) => {
-		if(!user) {
-			req.flash("error", 
-			"The password reset token is invalid or has expired, please try again");
-			res.redirect("/forgot");
-		}
-		res.render("reset", {token: req.params.token});
-	})
-});
-
-//Reset password/:token POST
-router.post("/reset/:token", (req, res) => {
-	async.waterfall([
-		(done) => {
-			User.findOne({resetPasswordToken: req.params.token, 
-			resetPasswordExpires: {$gt: Date.now()}}, (err, user) => {
-				if(!user) {
-				req.flash("error", 
-				"The password reset token is invalid or has expired, please try again");
-				return res.redirect("back");
-				}
-				if(req.body.password === req.body.confirm) {
-					user.setPassword(req.body.password, (err) => {
-						user.resetPasswordToken = undefined;
-            			user.resetPasswordExpires = undefined;
-						
-						user.save((err) => {
-							req.login(user, (err) => {
-								done(err, user);
-							});
-						});
-					});
-				} else {
-					req.flash("error", "The passwords do not match.");
-            		return res.redirect('back');
-				}
-			});
-		},
-		(user, done) => {
-			const smtpTransport = nodemailer.createTransport( {
-   service: "gmail",
-   auth: {
-       user: "mealinkteam@gmail.com",
-       pass: process.env.GMAILPW
-   }
-});
-		const mailOptions = {
-			to: user.email,
-			from: "MeaLink <mealinkteam@gmail.com>",
-			subject: "Your password has been changed",
-			html: '<p>Hi <em>' + user.username + '</em></p>' + '\n\n' + '<img src="https://www.a3communications.com/images/easyblog_shared/August_2016/8-1-16/password_sharing_felony_400.jpg">' + '\n\n' + '<p>This is a confirmation that the password for your account registered to <strong> ' + user.email + '</strong> has just been changed.' + '\n\n' + '<p>Thanks the MeatLink Site Team'   
-			};
-			smtpTransport.sendMail(mailOptions, function(err) {
-        	req.flash("success", "Your password has been changed.");
-        	done(err);
-			});
-		}
-	], (err) => {
-		res.redirect("/");
-	});			
-});
-
-//Reset password/:token POST
-router.post("/api/reset/:token", (req, res) => {
-	async.waterfall([
-		(done) => {
-			User.findOne({resetPasswordToken: req.params.token, 
-			resetPasswordExpires: {$gt: Date.now()}}, (err, user) => {
-				if(!user) {
-				req.flash("error", 
-				"The password reset token is invalid or has expired, please try again");
-				return res.redirect("back");
-				}
-				if(req.body.password === req.body.confirm) {
-					user.setPassword(req.body.password, (err) => {
-						user.resetPasswordToken = undefined;
-            			user.resetPasswordExpires = undefined;
-						
-						user.save((err) => {
-							req.login(user, (err) => {
-								res.status(200).send({
-												message: {user: user},
-												status: "success"
-											});
-								done(err, user);
-							});
-						
-						});
-					});
-				} else {
-					res.status(401).send({
-							message:"Password do not match",
-							status: "fail"
-						});
-				}
-			});
-		},
-		(user, done) => {
-			const smtpTransport = nodemailer.createTransport( {
-   service: "gmail",
-   auth: {
-       user: "mealinkteam@gmail.com",
-       pass: process.env.GMAILPW
-   }
-});
-		const mailOptions = {
-			to: user.email,
-			from: "MeaLink <mealinkteam@gmail.com>",
-			subject: "Your password has been changed",
-			html: '<p>Hi <em>' + user.username + '</em></p>' + '\n\n' + '<img src="https://www.a3communications.com/images/easyblog_shared/August_2016/8-1-16/password_sharing_felony_400.jpg">' + '\n\n' + '<p>This is a confirmation that the password for your account registered to <strong> ' + user.email + '</strong> has just been changed.' + '\n\n' + '<p>Thanks the MeatLink Site Team'   
-			};
-			smtpTransport.sendMail(mailOptions, function(err) {
-        			req.flash("success", "Your password has been changed.");
-        	done(err);
-			});
-		}
-	], (err) => {
-		res.redirect("/");
-	});			
-});
-
 //get time
 router.get("/api/time", function(req, res){
 	var d = new Date().toLocaleString('zh-TW', {timeZone: 'Asia/Taipei',hour12: false});
@@ -605,9 +360,16 @@ router.get("/api/time", function(req, res){
 });
 
 //chatroom routes
-router.get("/chat", function(req, res){
-	res.render("chat");
+router.get("/chat/:id", function(req, res){
+	Messages.findById(req.body.user._id, chater, function(req, res){
+		res.render("chat",{ user: chater});
+	});	
 });
 
+router.post("/chat/:id", function(req, res){
+	Messages.findByIdAndUpdate(req.params.id, req.body.user, function(req, res){
+		
+	})
+});
 
 module.exports = router;

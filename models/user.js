@@ -5,12 +5,12 @@ var passportLocalMongoose = require("passport-local-mongoose");
 var UserSchema = new mongoose.Schema({
     username: { type: String, unique: true, required: true },
 	email: { type: String, unique: true, required: true},
-	avatar:{ type: Buffer},
+	avatar:{ type: String, default: "/uploads/image.jpg" },
 	password: String,
 	department: { type: String, default: "My major"},
 	introduction: { type: String, default: "Hello~I'm...."},
-	resetPasswordToken: String,
-	resetPasswordExpires: Date
+	chatmember:{type: mongoose.Schema.Types.ObjectId,
+		 	    ref: "Messages"}   
 });
 
 // UserSchema.plugin(passportLocalMongoose);

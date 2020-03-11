@@ -1,16 +1,17 @@
 var mongoose = require("mongoose");
 
 var messagesSchema = mongoose.Schema({
-    name: {
+    user1: {
 		  type: mongoose.Schema.Types.ObjectId,
 		  ref: "User"
 	  },
-	avtar: {
+	user2: {
 		  type: mongoose.Schema.Types.ObjectId,
 		  ref: "User"
 	  },
-    msg: String,
-    time: Number,
+    msg: [{
+    poster: {type: mongoose.Schema.Types.ObjectId, ref: "User"},content: {type: mongoose.Schema.Types.ObjectId, ref: "User"},time:Number
+  }]
 });
 
 module.exports = mongoose.model("Messages", messagesSchema);
