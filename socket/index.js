@@ -1,5 +1,4 @@
-var Messages = require('../models/Messages'),
-    moment   = require('moment');
+var Messages = require('../models/Messages');
 class SocketHander {
 
     constructor() {
@@ -12,17 +11,16 @@ class SocketHander {
         this.db.Promise = global.Promise;
     }
 
-    getMessages() {
-        return Messages.find();
+    getMessages(data) {
+        return Messages.find({chatroomid:data.chatroomid});
     }
 
     storeMessages(data) {
 
         console.log(data);
         var newMessages = new Messages({
-            name: data.name,
-            msg: data.msg,
-            time: moment().valueOf(),
+            chatroomidid: data._id,
+            msg: data.msg
         });
 
         var doc = newMessages.save();

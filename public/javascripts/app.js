@@ -1,19 +1,21 @@
-if (user) {
+var User                  = require("../models/user");
+let account = User.findById(req.params.id);
 
-    // 新增使用者    
-	account = user.username;
-    socket = io.connect("https://goorm-ide-test-rrajc.run.goorm.io");
+if (!account) {
+    req.flash("error", "Please loggin!!");
+	res.redirect("/");
+    } else {
+        console.log(account);
+		socket = io.connect("https://goorm-ide-test-rrajc.run.goorm.io");
 
-    socket.emit('clients', user);
-
-    // 歷史訊息
+    socket.emit('clients', account); 
+	// 歷史訊息
     socket.on('history', (obj) => {
         if (obj.length > 0) {
             appendData(obj);
         }
     });
-
-    socket.on('clients', (obj) => {
+		socket.on('clients', (obj) => {
         console.log(obj);
         document.querySelector('.online').innerHTML = obj.clients;
         if (obj.user !== undefined) broadcast(obj.user);
@@ -22,7 +24,7 @@ if (user) {
     socket.on('message', (obj) => {
         appendData([obj]);
     });
-}
+    }
 
 document.querySelector('#btnAddMsg').addEventListener('click', () => {
     sendData();
@@ -39,14 +41,11 @@ document.querySelector('input').addEventListener('keypress', (e) => {
 function sendData() {
     let msg = document.querySelector('input').value;
     if (!msg) {
-        swal({
-            title: "請輸入訊息!",
-            icon: "error",
-        });
+         req.flash("error", "Please enter what you want to sent!!");
         return;
     }
     let data = {
-        name: user,
+        name: account.username,
         msg: msg,
     };
     socket.emit('message', data);
@@ -67,7 +66,7 @@ function scrollWindow() {
  */
 function appendData(obj) {
 
-    let el = document.querySelector('.speeches');
+    let el = document.querySelector('.bubbles');
     let html = el.innerHTML;
 
     obj.forEach(element => {
@@ -100,11 +99,11 @@ function appendData(obj) {
 
         html +=
             `
-            <div class="${element.name == user ? 'right circular group' : 'circular group'}">
+            <div class="${element.name == account ? 'right circular group' : 'circular group'}">
                 <div class="speech">
-                    ${element.name == user? "<div class='group'>":''}
+                    ${element.name == account? "<div class='group'>":''}
                         <div class="avatar">
-                            <img src="${element.name == user ? './uploads/image.jpg' : './uploads/image.jpg'}">
+                            <img src="${element.name == account ? './uploads/image.jpg' : './uploads/image.jpg'}">
                         </div>
                         <div class="content">
                             <div class="inline author">${element.name == account ? '' : element.name}</div>
@@ -116,35 +115,6 @@ function appendData(obj) {
             </div>
             `;
     });
-
-    el.innerHTML = html.trim();
-    scrollWindow();
-
-}
-
-/**
- * 廣播有人進來
- * @param {暱稱} obj 
- */
-function broadcast(obj) {
-
-    // <div class="speech">
-    //     <div class="broadcast">
-    //         <i class="announcement icon"></i>Robby 溜了進來。
-    //     </div>
-    // </div>
-
-    let el = document.querySelector('.speeches');
-    let html = el.innerHTML;
-
-    html +=
-        `
-        <div class="speech">
-            <div class="broadcast">
-                <i class="announcement icon"></i>${obj} 溜了進來。
-            </div>
-        </div>
-        `;
 
     el.innerHTML = html.trim();
     scrollWindow();

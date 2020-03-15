@@ -1,14 +1,14 @@
 var mongoose = require("mongoose");
 
-var friendSchema = mongoose.Schema({
-    name: {
+var chatsSchema = mongoose.Schema({
+    user1: {
 		  type: mongoose.Schema.Types.ObjectId,
 		  ref: "User"
 	  },
-	avtar: {
+	user2: {
 		  type: mongoose.Schema.Types.ObjectId,
 		  ref: "User"
 	  }
 });
 
-module.exports = mongoose.model("Friends", friendSchema);
+module.exports = mongoose.model("Chats", chatsSchema);

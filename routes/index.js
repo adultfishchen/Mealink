@@ -8,6 +8,7 @@ var express               = require("express"),
 	crypto				  = require("crypto"),
 	multer                = require("multer"),
 	Messages              = require("../models/Messages"),
+	Chat                  = require("../models/chats"),
 	User                  = require("../models/user");
 
 
@@ -169,16 +170,16 @@ router.post("/api/login", function(req, res){
 //Logout route
 router.get("/logout", function(req, res){
 	req.logout();
-	req.flash("success", "Successfully logged you out");
+	req.flash("success", "Successfully logged you out!!");
 	res.redirect("/");
 	console.log(req.body);
 });
 
 //card route
 router.get("/card", function(req, res) {	
-		var catchusers = User.find().select('_id');
-	// Get the count of all users
-	User.countDocuments().exec(function (err, count) {
+	var catchusers = User.find().select('_id');
+		// Get the count of all users
+		User.countDocuments().exec(function (err, count) {
 		// Get a random entry
 		var random = Math.floor(Math.random() * count);
 		// Again query all users but only fetch one offset by our random #
@@ -188,21 +189,19 @@ router.get("/card", function(req, res) {
 			if(err) {
 				req.flash("error", "Something went wrong, please try again");
 			} else {
-				res.render("show", {user: result});	
+				res.render("showcard", {user: result});
 				res.locals.user = req.user;
 				var u1 = req.user;
-				var nmessages = new Messages ({
-					user1: u1._id,
-					user2: result._id
-				});
-				console.log(nmessages);
-			}
-			
-		}
-	)
-	});	
-});
-
+				var nchat = new Chat ({
+				user1: u1._id,
+				user2: result._id
+					});
+					nchat.save();
+					console.log(nchat);
+				}	
+			});
+		});
+	});
 
 router.get("/api/card", function(req, res) {
 	var catchusers = User.find().select('_id');
@@ -361,13 +360,20 @@ router.get("/api/time", function(req, res){
 
 //chatroom routes
 router.get("/chat/:id", function(req, res){
-	Messages.findById(req.body.user._id, chater, function(req, res){
-		res.render("chat",{ user: chater});
+	res.locals.user = req.user;
+	var nuser = req.user;
+	console.log(nuser._id);
+	Chat.findById(nuser._id === user1, function(err, chatroom){
+		console.log(chatroom);
+		var nmessages = new Messages({
+			chatroomid: chatroom._id
+		});
+		res.render("chat");
 	});	
 });
 
 router.post("/chat/:id", function(req, res){
-	Messages.findByIdAndUpdate(req.params.id, req.body.user, function(req, res){
+	Chat.findByIdAndUpdate(req.params.id, req.body.user, function(req, res){
 		
 	})
 });

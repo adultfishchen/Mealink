@@ -27,6 +27,8 @@ mongoose.connect(url,
  useCreateIndex: true
 });
 
+
+
 io.on('connection', async (socket) => {
 
   console.log('a user connected');
@@ -38,7 +40,7 @@ io.on('connection', async (socket) => {
 
   socketHander.connect();
 
-  const history = await socketHander.getMessages();
+  const history = await socketHander.getMessages({chatroomid:data.chatroomid});
 
   io.to(socketid).emit('history', history);
   io.to(socketid).emit('clients', {
@@ -47,9 +49,6 @@ io.on('connection', async (socket) => {
 
   socket.on("disconnect", () => {
     console.log("a user go out");
-    io.emit("clients", {
-      clients: clients - 1,
-    });
   });
 
   socket.on("message", (obj) => {
