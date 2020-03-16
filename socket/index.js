@@ -12,14 +12,15 @@ class SocketHander {
     }
 
     getMessages(data) {
-        return Messages.find({chatroomid:data.chatroomid});
+        return Messages.find({chatroomid:data.chatid});
     }
 
     storeMessages(data) {
 
         console.log(data);
         var newMessages = new Messages({
-            chatroomidid: data._id,
+            chatroomid:data.chatid,
+			poster: data.userid,
             msg: data.msg
         });
 

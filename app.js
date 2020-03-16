@@ -35,32 +35,33 @@ io.on('connection', async (socket) => {
   const clients = await io.engine.clientsCount;
 
   const socketid = socket.id;
-
-  socketHander = new SocketHander();
-
-  socketHander.connect();
-
-  const history = await socketHander.getMessages({chatroomid:data.chatroomid});
-
-  io.to(socketid).emit('history', history);
-  io.to(socketid).emit('clients', {
-    clients: clients,
-  });
+ 
 
   socket.on("disconnect", () => {
     console.log("a user go out");
   });
 
-  socket.on("message", (obj) => {
-    socketHander.storeMessages(obj);
-    io.emit("message", obj);
-  });
+  socket.on('login', async (obj) => {
+	  
+	  var chatid = obj.chatid;
+	  var userid = obj.user;
+    	  
+	  socketHander = new SocketHander();
 
-  socket.on('clients', (obj) => {
-    io.emit("clients", {
-      clients: clients,
-      user: obj,
-    });
+	  socketHander.connect();
+
+	  const history = await socketHander.getMessages({chatid:chatid});
+
+	  io.to(socketid).emit('history_' + chatid, history);
+	  
+	  
+	  socket.on("message_" + chatid, (obj) => {
+		  	var data = {msg:obj.msg, chatid:chatid, userid:userid}
+			socketHander.storeMessages(data);
+			io.emit("message_" + chatid, data);
+	  });
+
+	  
   });
 
 });

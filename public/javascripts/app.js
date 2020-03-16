@@ -1,30 +1,23 @@
-var User                  = require("../models/user");
-let account = User.findById(req.params.id);
 
-if (!account) {
-    req.flash("error", "Please loggin!!");
-	res.redirect("/");
-    } else {
-        console.log(account);
-		socket = io.connect("https://goorm-ide-test-rrajc.run.goorm.io");
 
-    socket.emit('clients', account); 
-	// 歷史訊息
-    socket.on('history', (obj) => {
-        if (obj.length > 0) {
-            appendData(obj);
-        }
-    });
-		socket.on('clients', (obj) => {
-        console.log(obj);
-        document.querySelector('.online').innerHTML = obj.clients;
-        if (obj.user !== undefined) broadcast(obj.user);
-    });
+account = {chatid: chat_id, user:user1_id};
 
-    socket.on('message', (obj) => {
-        appendData([obj]);
-    });
-    }
+socket = io.connect("https://goorm-ide-test-rrajc.run.goorm.io");
+console.log(account);
+
+socket.emit('login', account); 
+
+// 歷史訊息
+socket.on('history_' + chat_id, (obj) => {
+	if (obj.length > 0) {
+		appendData(obj);
+	}
+});
+
+socket.on('message_' + chat_id, (obj) => {
+	appendData([obj]);
+});
+
 
 document.querySelector('#btnAddMsg').addEventListener('click', () => {
     sendData();
@@ -45,10 +38,10 @@ function sendData() {
         return;
     }
     let data = {
-        name: account.username,
+        name: account._id,
         msg: msg,
     };
-    socket.emit('message', data);
+    socket.emit('message_' + chat_id, data);
     document.querySelector('input').value = '';
 }
 
@@ -56,7 +49,7 @@ function sendData() {
  * 卷軸捲動至下
  */
 function scrollWindow() {
-    let h = document.querySelector('.speeches');
+    let h = document.querySelector('.bubbles');
     h.scrollTo(0, h.scrollHeight);
 }
 
@@ -82,35 +75,40 @@ function appendData(obj) {
         //     </div>
         //     <div class=" time"></div>
         //   </div>
-
-        // myself
-        //   <div class="speech">
-        //     <div class="group">
-        //       <div class="avatar">
-        //         <img src="./images/user.png">
-        //       </div>
-        //       <div class="content">
-        //         <div class="inline author">Yami Odymel</div>
-        //         <div class="text">：嗨！早安。</div>
-        //       </div>
-        //     <div class=" time"></div>
-        //     </div>
-        //   </div>
+		
+		console.log(element);
+		
+		var name = "user";
+	    var pic = "/uploads/image.jpg";//default
+		var msg = "：" + element.msg;
+		
+		if (element.userid == user1_id || element.poster == user1_id)//self
+		{
+			name = user1_name;
+			pic = user1_pic;
+		}
+		
+		if (element.userid == user2_id || element.poster == user2_id)//user 2 sent
+		{
+			name = user2_name;
+			pic = user2_pic;
+		}
+		
 
         html +=
             `
-            <div class="${element.name == account ? 'right circular group' : 'circular group'}">
-                <div class="speech">
-                    ${element.name == account? "<div class='group'>":''}
+            
+                <div class="bubbles">
+                    <div class="group">
                         <div class="avatar">
-                            <img src="${element.name == account ? './uploads/image.jpg' : './uploads/image.jpg'}">
+                            <img src="${ "../.." + pic}" width="100" height="100">
                         </div>
                         <div class="content">
-                            <div class="inline author">${element.name == account ? '' : element.name}</div>
-                            <div class="text">${element.name == account ? element.msg : '：' + element.msg}</div> 
+                            <div class="inline author">${name}</div>
+                            <div class="text">${msg}</div> 
                         </div>  
-                        <div class=" time">${moment(element.time).fromNow()}</div>
-                    ${element.name == account? "</div>":''}
+                       
+                    </div>
                 </div>
             </div>
             `;

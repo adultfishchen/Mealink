@@ -1,10 +1,20 @@
 <%- include ("partials/header") %>
 
+<script type="text/javascript">	
+var chat_id = "<%= chat_id %>";
+var user1_id = "<%= user1.id %>";
+var user2_id = "<%= user2.id %>";
+var user1_name = "<%= user1.name %>";
+var user2_name = "<%= user2.name %>";
+var user1_pic = "<%= user1.pic %>";
+var user2_pic = "<%= user2.pic %>";
+</script>
+
  <!-- 主要容器網格系統 -->
   <div class=" narrow container grid">
 
       <!-- 中部主要聊天訊息 -->
-      <div class="messages segment">
+      <div class="input grid">
         <!-- 對話氣泡 -->
         <div class="bubbles">
           <!-- appendChild from app.js -->
@@ -15,7 +25,7 @@
 
       <!-- 底部輸入欄位 -->
       <div class="bottom attached segment">
-        <div class="grid">
+        <div class="input grid">
           <div class="stretched column">
             <div class="fluid input">
               <input placeholder="在此輸入文字⋯⋯" />
@@ -27,6 +37,5 @@
       <!-- / 底部輸入欄位 -->  
   </div>
   <!-- / 主要容器網格系統 -->
-<script src="./javascripts/sign.js"></script>
-<script src="./javascripts/app.js"></script>
+<script src="../../javascripts/app.js"></script>
 <%- include ("partials/footer") %>

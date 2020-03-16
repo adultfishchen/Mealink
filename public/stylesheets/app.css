@@ -34,37 +34,13 @@
 
 /* chat content scroll */
 
-.ts .speeches {
+.bubbles {
   overflow-y: scroll;
   height: 400px;
   padding-right: 10px;
 }
 
-/* flex right align */
-
-.ts .speeches .right .speech .group {
-  display: flex;
-  flex-direction: row-reverse;
-}
-
-/* start add .time */
-
-.ts.speeches .speech .content {
-  flex: unset;
-}
-
-.ts.speeches .speech .time {
-  color: #aaa;
-  position: relative;
-  display: table;
-  margin-left: 1em;
-  padding: .58em .58em;
-  word-wrap: normal;
-  font-size: 12px;
-  line-height: 2em;
-}
-
-.ts.speeches .speech .broadcast {
+.bubbles {
   color: #999;
   position: relative;
   display: table;
@@ -72,10 +48,4 @@
   word-wrap: normal;
   font-size: 12px;
   line-height: 2em;
-}
-
-/* end add .time */
-
-.ts.menu .item.logout {
-  display: none;
 }

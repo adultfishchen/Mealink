@@ -177,30 +177,72 @@ router.get("/logout", function(req, res){
 
 //card route
 router.get("/card", function(req, res) {	
-	var catchusers = User.find().select('_id');
+	res.locals.user =req.user;
+	var u1 = req.user;
+	var u1_id = u1._id;
+	console.log(u1_id);
+	// var catchusers = User.find({ "_id": { $ne:u1_id }}).select('_id');
+	
+	var all_users = User.find({ "_id": { $ne:u1_id }});
 		// Get the count of all users
-		User.countDocuments().exec(function (err, count) {
+		// User.countDocuments().exec(function (err, count) {
+	
+		var count = all_users.count();
+		console.log(count);
+	
+		if (count == 0)
+		{
+			req.flash("error", "No users");
+		}
+		else{
+
+			
 		// Get a random entry
 		var random = Math.floor(Math.random() * count);
 		// Again query all users but only fetch one offset by our random #
-		User.findOne().skip(random).exec(
+		User.findOne({ "_id": { $ne:u1_id }}).skip(random).exec(
 		// Tada! random user
 		function (err, result) {
 			if(err) {
 				req.flash("error", "Something went wrong, please try again");
 			} else {
-				res.render("showcard", {user: result});
-				res.locals.user = req.user;
-				var u1 = req.user;
-				var nchat = new Chat ({
-				user1: u1._id,
-				user2: result._id
-					});
-					nchat.save();
-					console.log(nchat);
+					
+				
+				Chat.findOne({$or:
+					   [
+						{$and:[{user1: u1_id}, {user2: result._id}]},{$and:[{user1: result._id}, {user2: u1_id}]}
+					   ]
+					 }).exec(function(err, chatroom){	
+							if(err) {
+								req.flash("error", "(No Chat)Something went wrong, please try again");
+							} else {
+
+
+
+								if ( chatroom === null)
+								{
+								 var chatroom = new Chat ({
+								  user1: u1_id,
+								  user2: result._id
+								});
+								chatroom.save();
+								}
+								console.log(chatroom);
+
+								var chat_id = chatroom._id;
+
+								console.log(chat_id);
+
+								res.render("showcard", {user: result, chat_id:chat_id});
+							}
+
+				});	
+				
+								
 				}	
 			});
-		});
+		}
+		// });
 	});
 
 router.get("/api/card", function(req, res) {
@@ -359,23 +401,46 @@ router.get("/api/time", function(req, res){
 });
 
 //chatroom routes
-router.get("/chat/:id", function(req, res){
+router.get("/chat/:chatid/:userid", function(req, res){
+	// res.locals.user = req.user;
+	// var nuser = req.user;
+	// Chat.find({$or:
+	// [
+	// {$and:[{user1: nuser._id}, {user2: req.params.id}]},{$and:[{user1: req.params.id}, {user2: nuser._id}]}
+	// ]
+	// }, function(err, chatroom){
+		
+	// 	console.log(chatroom);
+	
 	res.locals.user = req.user;
 	var nuser = req.user;
-	console.log(nuser._id);
-	Chat.findById(nuser._id === user1, function(err, chatroom){
-		console.log(chatroom);
-		var nmessages = new Messages({
-			chatroomid: chatroom._id
-		});
-		res.render("chat");
-	});	
+	
+	User.findById(nuser._id,function(err, user1){
+		if(err){
+			req.flash("error", "Not found");
+		}
+		else{
+			var user_1 = {id:user1._id ,name:user1.username, pic:user1.avatar};
+			
+			User.findById(req.params.userid,function(err, user2){
+				if(err){
+					req.flash("error", "Not found");
+				}
+				else{
+					var user_2 = {id:user2._id, name:user2.username, pic:user2.avatar};
+					
+					res.render("chat", {chat_id:req.params.chatid, user1:user_1, user2:user_2});
+					
+				}
+			});			
+		}
+	});
+	
+	
+		
+	// });	
 });
 
-router.post("/chat/:id", function(req, res){
-	Chat.findByIdAndUpdate(req.params.id, req.body.user, function(req, res){
-		
-	})
-});
+
 
 module.exports = router;
