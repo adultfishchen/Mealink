@@ -228,7 +228,6 @@ router.get("/card", function(req, res) {
 								chatroom.save();
 								}
 								console.log(chatroom);
-
 								var chat_id = chatroom._id;
 
 								console.log(chat_id);
@@ -245,14 +244,34 @@ router.get("/card", function(req, res) {
 		// });
 	});
 
-router.get("/api/card", function(req, res) {
-	var catchusers = User.find().select('_id');
-	// Get the count of all users
-	User.countDocuments().exec(function (err, count) {
+router.get("api/card", function(req, res) {	
+	res.locals.user =req.user;
+	var u1 = req.user;
+	var u1_id = u1._id;
+	console.log(u1_id);
+	// var catchusers = User.find({ "_id": { $ne:u1_id }}).select('_id');
+	
+	var all_users = User.find({ "_id": { $ne:u1_id }});
+		// Get the count of all users
+		// User.countDocuments().exec(function (err, count) {
+	
+		var count = all_users.count();
+		console.log(count);
+	
+		if (count == 0)
+		{
+			res.status(401).send({
+					message:"Somethinig went wrong",
+					status: "fail"
+				});
+		}
+		else{
+
+			
 		// Get a random entry
 		var random = Math.floor(Math.random() * count);
 		// Again query all users but only fetch one offset by our random #
-		User.findOne().skip(random).exec(
+		User.findOne({ "_id": { $ne:u1_id }}).skip(random).exec(
 		// Tada! random user
 		function (err, result) {
 			if(err) {
@@ -261,15 +280,48 @@ router.get("/api/card", function(req, res) {
 					status: "fail"
 				});
 			} else {
-				res.status(200).send({
-					message: {user: result},
-					status: "success"
-				});
-			}
-		});
+				Chat.findOne({$or:
+					   [
+						{$and:[{user1: u1_id}, {user2: result._id}]},{$and:[{user1: result._id}, {user2: u1_id}]}
+					   ]
+					 }).exec(function(err, chatroom){	
+							if(err) {
+								res.status(401).send({
+								message:"Somethinig went wrong",
+								status: "fail"
+								});
+							} else {
+
+
+
+								if ( chatroom === null)
+								{
+								 var chatroom = new Chat ({
+								  user1: u1_id,
+								  user2: result._id
+								});
+								chatroom.save();
+								}
+								console.log(chatroom);
+								var chat_id = chatroom._id;
+
+								console.log(chat_id);
+								res.status(200).send({
+								message: {user: result},
+								status: "success"
+							});
+
+								res.render("showcard", {user: result, chat_id:chat_id});
+							}
+
+				});	
+				
+								
+				}	
+			});
+		}
+		// });
 	});
-	
-});
 
 //Show page
 router.get("/users/:id", function(req, res) {
