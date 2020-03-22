@@ -473,14 +473,21 @@ router.get("/api/chat/:user1id/:user2id", function(req, res){
 
 
 
-// 						if ( chatroom === null)
-// 						{
-// 						 var chatroom = new Chat ({
-// 						  user1: u1_id,
-// 						  user2: result._id
-// 						});
-// 						chatroom.save();
-// 						}
+						if ( chatroom === null)
+						{
+						//  var chatroom = new Chat ({
+						//   user1: u1_id,
+						//   user2: result._id
+						// });
+						// chatroom.save();
+							
+							
+							res.status(200).send({
+											message:"not found chat room",
+											status: "fail"
+										});
+							
+						}
 						console.log(chatroom);
 
 						var chat_id = chatroom._id;
