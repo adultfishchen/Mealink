@@ -488,16 +488,19 @@ router.get("/api/chat/:user1id/:user2id", function(req, res){
 										});
 							
 						}
-						console.log(chatroom);
+						else
+						{
+							console.log(chatroom);
 
-						var chat_id = chatroom._id;
+							var chat_id = chatroom._id;
 
-						console.log(chat_id);
+							console.log(chat_id);
 
-						res.status(200).send({
-										message:{chatid:chat_id},
-										status: "success"
-									});
+							res.status(200).send({
+											message:{chatid:chat_id},
+											status: "success"
+										});
+						}
 					}
 
 		});	
