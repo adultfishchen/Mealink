@@ -444,12 +444,12 @@ router.get("/api/time", function(req, res){
 });
 
 //get chat
-router.get("/api/chat/:user1id/:user2id"	, function(req, res){
+router.get("/api/chat/:user1id/:user2id", function(req, res){
 	// var userid = (req.params.userid).split(':');
 	
-	var user1id =mongoose.Types.ObjectId(userid[0]);
+	var user1id =mongoose.Types.ObjectId(req.params.user1id);
 	
-	var user2id = mongoose.Types.ObjectId(userid[1]);
+	var user2id = mongoose.Types.ObjectId(req.params.user2id);
 	
 	
 	Chat.findOne({$or:
