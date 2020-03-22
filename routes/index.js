@@ -452,30 +452,36 @@ router.get("/api/chat/:user1id/:user2id", function(req, res){
 	var user2id = mongoose.Types.ObjectId(req.params.user2id);
 	
 	
-	Chat.findOne({$or:
-					   [
-						{$and:[{user1: user1id}, {user2: user2id}]},{$and:[{user1: user2id}, {user2: user1id}]}
-					   ]
-					 }, function (err, chartoom){
-		if(err){
-			res.status(401).send({
-					message:"Somethinig went wrong",
-					status: "fail"
+	res.status(200).send({
+					message:{user1id:user1id, user2id:user2id},
+					status: "success"
 				});
-		}
-		else {
-			var chat_id = chatroom._id;
-			console.log(chat_id);
+	
+	
+	// Chat.findOne({$or:
+	// 				   [
+	// 					{$and:[{user1: user1id}, {user2: user2id}]},{$and:[{user1: user2id}, {user2: user1id}]}
+	// 				   ]
+	// 				 }, function (err, chartoom){
+	// 	if(err){
+	// 		res.status(401).send({
+	// 				message:"Somethinig went wrong",
+	// 				status: "fail"
+	// 			});
+	// 	}
+	// 	else {
+	// 		var chat_id = chatroom._id;
+	// 		console.log(chat_id);
 			
 			
-			res.status(200).send({
-							message:{chat_id:chat_id},
-							status: "success"
-						});
+	// 		res.status(200).send({
+	// 						message:{chat_id:chat_id},
+	// 						status: "success"
+	// 					});
 			
-		}
+	// 	}
 		
-	}); 
+	// }); 
 								
 
 							
