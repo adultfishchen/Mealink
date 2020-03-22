@@ -463,6 +463,13 @@ router.get("/api/chat/:user1id/:user2id", function(req, res){
 		else {
 			var chat_id = chatroom._id;
 			console.log(chat_id);
+			
+			
+			res.status(200).send({
+							message:{chat_id:chat_id},
+							status: "success"
+						});
+			
 		}
 		
 	}); 
