@@ -443,11 +443,13 @@ router.get("/api/time", function(req, res){
 						});
 });
 
-//get time
-router.get("/api/chat/:user1id/:user2id", function(req, res){
-	var user1id =mongoose.Types.ObjectId(req.params.user1id);
+//get chat
+router.get("/api/chat/:userid"	, function(req, res){
+	var userid = (req.params.userid).split(':');
 	
-	var user2id = mongoose.Types.ObjectId(req.params.user2id);
+	var user1id =mongoose.Types.ObjectId(userid[0]);
+	
+	var user2id = mongoose.Types.ObjectId(userid[1]);
 	
 	
 	Chat.findOne({$or:
