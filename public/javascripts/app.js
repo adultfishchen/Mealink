@@ -2,7 +2,7 @@
 
 account = {chatid: chat_id, user:user1_id};
 
-socket = io.connect("https://goorm-ide-test-rrajc.run.goorm.io/");
+socket = io.connect("https://mealink.herokuapp.com/");
 console.log(account);
 
 socket.emit('login', account); 
