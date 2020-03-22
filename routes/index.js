@@ -458,7 +458,10 @@ router.get("/api/chat/:user1id/:user2id", function(req, res){
 					   ]
 					 }, function (err, chartoom){
 		if(err){
-			req.flash("err", "Something wrong!!")
+			res.status(401).send({
+					message:"Somethinig went wrong",
+					status: "fail"
+				});
 		}
 		else {
 			var chat_id = chatroom._id;
