@@ -9,6 +9,7 @@ var express               = require("express"),
 	multer                = require("multer"),
 	Messages              = require("../models/Messages"),
 	Chat                  = require("../models/chats"),
+	mongoose              = require('mongoose'),
 	User                  = require("../models/user");
 
 
@@ -440,6 +441,32 @@ router.get("/api/time", function(req, res){
 							message:{time:d},
 							status: "success"
 						});
+});
+
+//get time
+router.get("/api/chat/:user1id/:user2id", function(req, res){
+	var user1id =mongoose.Types.ObjectId(req.params.user1id);
+	
+	var user2id = mongoose.Types.ObjectId(req.params.user2id);
+	
+	
+	Chat.findOne({$or:
+					   [
+						{$and:[{user1: user1id}, {user2: user2id}]},{$and:[{user1: user2id}, {user2: user1id}]}
+					   ]
+					 }, function (err, chartoom){
+		if(err){
+			req.flash("err", "Something wrong!!")
+		}
+		else {
+			var chat_id = chatroom._id;
+			console.log(chat_id);
+		}
+		
+	}); 
+								
+
+							
 });
 
 //chatroom routes
