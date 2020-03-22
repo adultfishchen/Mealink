@@ -244,7 +244,7 @@ router.get("/card", function(req, res) {
 		// });
 	});
 
-router.get("api/card", function(req, res) {	
+router.get("/api/card", function(req, res) {	
 	res.locals.user =req.user;
 	var u1 = req.user;
 	var u1_id = u1._id;
