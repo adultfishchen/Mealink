@@ -9,8 +9,8 @@ var UserSchema = new mongoose.Schema({
 	password: String,
 	department: { type: String, default: "My major"},
 	introduction: { type: String, default: "Hello~I'm...."},
-	friends:{type: mongoose.Schema.Types.ObjectId,
-		 	 ref: "Chat"}   
+	match:[{type: mongoose.Schema.Types.ObjectId,
+		 	  ref: "Chats"}]   
 });
 
 // UserSchema.plugin(passportLocalMongoose);
