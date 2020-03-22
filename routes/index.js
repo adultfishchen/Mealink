@@ -444,8 +444,8 @@ router.get("/api/time", function(req, res){
 });
 
 //get chat
-router.get("/api/chat/:userid"	, function(req, res){
-	var userid = (req.params.userid).split(':');
+router.get("/api/chat/:user1id/:user2id"	, function(req, res){
+	// var userid = (req.params.userid).split(':');
 	
 	var user1id =mongoose.Types.ObjectId(userid[0]);
 	
