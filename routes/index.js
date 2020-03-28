@@ -387,27 +387,32 @@ User.findByIdAndUpdate(req.params.id, newvalues, function(err, UpdatedUser) {
 });
     
 router.post("/api/users/avatar/:id",upload.single("user[avatar]"), function(req, res, next) {
-	if(req.file !== undefined){
-		var newvalues = { $set: { avatar: "/uploads/" + req.file.filename } };
-		User.findByIdAndUpdateone(req.params.id, newvalues, function(err, UpdatedUser) {   
-	if(err) {
-			res.status(401).send({
-					message:"Somethinig went wrong",
-					status: "fail"
-				});
-		} else {
-			res.status(200).send({
-					message: {user: UpdatedUser},
+	res.status(200).send({
+					message: {user:req.params.id, name:req.file.filename},
 					status: "success"
 				});
-		}
-	});
-	} else {
-		res.status(404).send({
-					message:"Somethinig went wrong",
-					status: "fail"
-				});
-	}	
+	
+// 	if(req.file !== undefined){
+// 		var newvalues = { $set: { avatar: "/uploads/" + req.file.filename } };
+// 		User.findByIdAndUpdateone(req.params.id, newvalues, function(err, UpdatedUser) {   
+// 	if(err) {
+// 			res.status(401).send({
+// 					message:"Somethinig went wrong",
+// 					status: "fail"
+// 				});
+// 		} else {
+// 			res.status(200).send({
+// 					message: {user: UpdatedUser},
+// 					status: "success"
+// 				});
+// 		}
+// 	});
+// 	} else {
+// 		res.status(404).send({
+// 					message:"Somethinig went wrong",
+// 					status: "fail"
+// 				});
+// 	}	
 
 });
 
