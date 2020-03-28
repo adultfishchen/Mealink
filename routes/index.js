@@ -372,7 +372,7 @@ var upload = multer({
 
 
 //Update User PUT 
-router.put("/users/:id", middleware.checkUserOwnership, upload.single("user[avatar]"), function(req, res, next) {
+router.post("/users/:id", middleware.checkUserOwnership, upload.single("user[avatar]"), function(req, res, next) {
 	if(req.file !== undefined){
 		var newvalues = { $set: { avatar: "/uploads/" + req.file.filename } };
 User.findByIdAndUpdate(req.params.id, newvalues, function(err, UpdatedUser) {   
@@ -386,7 +386,7 @@ User.findByIdAndUpdate(req.params.id, newvalues, function(err, UpdatedUser) {
 	}
 });
     
-router.put("/api/users/avatar/:id",upload.single("user[avatar]"), function(req, res, next) {
+router.post("/api/users/avatar/:id",upload.single("user[avatar]"), function(req, res, next) {
 	if(req.file !== undefined){
 		var newvalues = { $set: { avatar: "/uploads/" + req.file.filename } };
 		User.findByIdAndUpdateone(req.params.id, newvalues, function(err, UpdatedUser) {   
