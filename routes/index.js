@@ -388,7 +388,7 @@ User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) 
 	});
 });
     
-router.put("/api/users/:id",upload.single("user[avatar]"), function(req, res, next) {
+router.put("/api/users/avatar/:id",upload.single("user[avatar]"), function(req, res, next) {
 	if(req.file !== undefined)
 		req.body.user.avatar = "/uploads/" + req.file.filename;
 User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
