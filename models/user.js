@@ -10,7 +10,7 @@ var UserSchema = new mongoose.Schema({
 	department: { type: String, default: "My major"},
 	introduction: { type: String, default: "Hello~I'm...."},
 	match:{type: String},
-	reservation:{type: String, default: false}
+	reservation:{type: Boolean, default: false}
 });
 
 // UserSchema.plugin(passportLocalMongoose);
