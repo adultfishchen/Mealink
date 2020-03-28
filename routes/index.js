@@ -373,9 +373,9 @@ var upload = multer({
 
 //Update User PUT 
 router.put("/users/:id", middleware.checkUserOwnership, upload.single("user[avatar]"), function(req, res, next) {
-	if(req.file !== undefined)
-		req.body.user.avatar = "/uploads/" + req.file.filename;
-User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
+	if(req.file !== undefined){
+		var newvalues = { $set: { avatar: "/uploads/" + req.file.filename } };
+User.findByIdAndUpdate(req.params.id, newvalues, function(err, UpdatedUser) {   
 	if(err) {
 			req.flash("error", "Something went wrong, please try again");
 		} else {
@@ -383,24 +383,32 @@ User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) 
 			res.redirect("/users/" + req.params.id);
 		}
 	});
+	}
 });
     
 router.put("/api/users/avatar/:id",upload.single("user[avatar]"), function(req, res, next) {
-// 	if(req.file !== undefined)
-// 		req.body.user.avatar = "/uploads/" + req.file.filename;
-// User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
-// 	if(err) {
-// 			res.status(401).send({
-// 					message:"Somethinig went wrong",
-// 					status: "fail"
-// 				});
-// 		} else {
-// 			res.status(200).send({
-// 					message: {user: UpdatedUser},
-// 					status: "success"
-// 				});
-// 		}
-// 	});
+	if(req.file !== undefined){
+		var newvalues = { $set: { avatar: "/uploads/" + req.file.filename } };
+		User.findByIdAndUpdateone(req.params.id, newvalues, function(err, UpdatedUser) {   
+	if(err) {
+			res.status(401).send({
+					message:"Somethinig went wrong",
+					status: "fail"
+				});
+		} else {
+			res.status(200).send({
+					message: {user: UpdatedUser},
+					status: "success"
+				});
+		}
+	});
+	} else {
+		res.status(404).send({
+					message:"Somethinig went wrong",
+					status: "fail"
+				});
+	}	
+
 });
 
 //Delete route which also removes from db
