@@ -386,21 +386,21 @@ User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) 
 });
     
 router.put("/api/users/avatar/:id",upload.single("user[avatar]"), function(req, res, next) {
-	if(req.file !== undefined)
-		req.body.user.avatar = "/uploads/" + req.file.filename;
-User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
-	if(err) {
-			res.status(401).send({
-					message:"Somethinig went wrong",
-					status: "fail"
-				});
-		} else {
-			res.status(200).send({
-					message: {user: UpdatedUser},
-					status: "success"
-				});
-		}
-	});
+// 	if(req.file !== undefined)
+// 		req.body.user.avatar = "/uploads/" + req.file.filename;
+// User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
+// 	if(err) {
+// 			res.status(401).send({
+// 					message:"Somethinig went wrong",
+// 					status: "fail"
+// 				});
+// 		} else {
+// 			res.status(200).send({
+// 					message: {user: UpdatedUser},
+// 					status: "success"
+// 				});
+// 		}
+// 	});
 });
 
 //Delete route which also removes from db
