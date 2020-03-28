@@ -550,5 +550,26 @@ router.get("/chat/:chatid/:userid", function(req, res){
 	// });	
 });
 
+router.put("/api/users/:id", function(req, res, next) {
+	if(req.body.user.reservation === false){
+		req.body.user.reservation = true;
+	} else {
+		req.body.user.reservation = false;
+	}
+		
+User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
+	if(err) {
+			res.status(401).send({
+					message:"Somethinig went wrong",
+					status: "fail"
+				});
+		} else {
+			res.status(200).send({
+					message: {user: UpdatedUser},
+					status: "success"
+				});
+		}
+	});
+});
 
 module.exports = router;
