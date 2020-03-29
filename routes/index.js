@@ -369,6 +369,35 @@ var upload = multer({
 	storage: storage
 });
 
+router.get("api/users/:id/edit", middleware.checkUserOwnership, function (req, res) {
+	User.findById(req.params.id, function(err, editUser) {
+		if(err) {
+			res.status(401).send({
+						message:"Somethinig went wrong",
+						status: "fail"
+					});
+		} else {
+			res.status(200).send({
+						message: {user: editUser},
+						status: "success"
+					});
+		}
+	});
+});
+
+var storage = multer.diskStorage({
+	destination: function(req, file, cb){
+		cb(null,"./public/uploads/");
+	},
+	filename: function(req, file, cb){
+		cb(null, file.originalname);
+	},
+	
+});
+
+var upload = multer({
+	storage: storage
+});
 
 //Post User Avatar
 router.post("/users/:id", middleware.checkUserOwnership, upload.single("user[avatar]"), function(req, res, next) {
