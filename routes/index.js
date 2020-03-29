@@ -369,7 +369,7 @@ var upload = multer({
 	storage: storage
 });
 
-router.get("api/users/:id/edit", middleware.checkUserOwnership, function (req, res) {
+router.get("api/users/:id/edit", function (req, res) {
 	User.findById(req.params.id, function(err, editUser) {
 		if(err) {
 			res.status(401).send({
