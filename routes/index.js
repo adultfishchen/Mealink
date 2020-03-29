@@ -369,20 +369,6 @@ var upload = multer({
 	storage: storage
 });
 
-//Update User PUT
-router.put("/users/:id", middleware.checkUserOwnership, upload.single("user[avatar]"), function(req, res, next) {
-	if(req.file !== undefined)
-		req.body.user.avatar = "/uploads/" + req.file.filename;
-User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
-	if(err) {
-			req.flash("error", "Something went wrong, please try again");
-		} else {
-			req.flash("success","Your profile has been updated");		
-			res.redirect("/users/" + req.params.id);
-		}
-	});
-});
-
 
 //Post User Avatar
 router.post("/users/:id", middleware.checkUserOwnership, upload.single("user[avatar]"), function(req, res, next) {
@@ -424,7 +410,20 @@ router.post("/api/users/avatar/:id",upload.single("user[avatar]"), function(req,
 				});
 	}	
 
-});   
+});
+
+router.put("/users/:id", middleware.checkUserOwnership, upload.single("user[avatar]"), function(req, res, next) {
+	if(req.file !== undefined)
+		req.body.user.avatar = "/uploads/" + req.file.filename;
+User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
+	if(err) {
+			req.flash("error", "Something went wrong, please try again");
+		} else {
+			req.flash("success","Your profile has been updated");		
+			res.redirect("/users/" + req.params.id);
+		}
+	});
+});    
 
 router.put("/api/users/basic/:id", function(req, res) {
 		User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
