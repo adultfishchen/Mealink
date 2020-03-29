@@ -426,7 +426,10 @@ User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) 
 });    
 
 router.put("/api/users/basic/:id", function(req, res) {
-		User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
+	if(req.file !== undefined)
+	{
+		var newvalues = { $set: { avatar: "/uploads/" + req.file.filename } };	
+	User.findByIdAndUpdate(req.params.id, req.body.user, newvalues, function(err, UpdatedUser) {   
 			if(err) {
 				res.status(401).send({
 						message:"Somethinig went wrong",
@@ -438,7 +441,14 @@ router.put("/api/users/basic/:id", function(req, res) {
 						status: "success"
 					});
 			}
+						   
 		});
+	}else {
+		res.status(404).send({
+					message:"Somethinig went wrong",
+					status: "fail"
+				});
+	}	
 
 });
 
