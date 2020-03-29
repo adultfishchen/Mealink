@@ -365,13 +365,26 @@ var storage = multer.diskStorage({
 	
 });
 
-
 var upload = multer({
 	storage: storage
 });
 
+//Update User PUT
+router.put("/users/:id", middleware.checkUserOwnership, upload.single("user[avatar]"), function(req, res, next) {
+	if(req.file !== undefined)
+		req.body.user.avatar = "/uploads/" + req.file.filename;
+User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
+	if(err) {
+			req.flash("error", "Something went wrong, please try again");
+		} else {
+			req.flash("success","Your profile has been updated");		
+			res.redirect("/users/" + req.params.id);
+		}
+	});
+});
 
-//Update User PUT 
+
+//Post User Avatar
 router.post("/users/:id", middleware.checkUserOwnership, upload.single("user[avatar]"), function(req, res, next) {
 	if(req.file !== undefined){
 		var newvalues = { $set: { avatar: "/uploads/" + req.file.filename } };
@@ -385,7 +398,7 @@ User.findByIdAndUpdate(req.params.id, newvalues, function(err, UpdatedUser) {
 	});
 	}
 });
-    
+
 router.post("/api/users/avatar/:id",upload.single("user[avatar]"), function(req, res, next) {
 	
 	if(req.file !== undefined)
@@ -411,7 +424,25 @@ router.post("/api/users/avatar/:id",upload.single("user[avatar]"), function(req,
 				});
 	}	
 
+});   
+
+router.put("/api/users/basic/:id", function(req, res) {
+		User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) {   
+			if(err) {
+				res.status(401).send({
+						message:"Somethinig went wrong",
+						status: "fail"
+					});
+			} else {
+				res.status(200).send({
+						message: {user: UpdatedUser},
+						status: "success"
+					});
+			}
+		});
+
 });
+
 
 //Delete route which also removes from db
 router.delete("/users/:id", middleware.checkUserOwnership, function(req, res) {
@@ -557,7 +588,7 @@ router.get("/chat/:chatid/:userid", function(req, res){
 	// });	
 });
 
-router.put("/api/users/:id", function(req, res, next) {
+router.put("/api/users/reserve/:id", function(req, res, next) {
 	if(req.body.user.reservation === false){
 		req.body.user.reservation = true;
 	} else {
