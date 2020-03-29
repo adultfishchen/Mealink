@@ -369,22 +369,6 @@ var upload = multer({
 	storage: storage
 });
 
-router.get("api/users/:id/edit", function (req, res) {
-	User.findById(req.params.id, function(err, editUser) {
-		if(err) {
-			res.status(401).send({
-						message:"Somethinig went wrong",
-						status: "fail"
-					});
-		} else {
-			res.status(200).send({
-						message: {user: editUser},
-						status: "success"
-					});
-		}
-	});
-});
-
 var storage = multer.diskStorage({
 	destination: function(req, file, cb){
 		cb(null,"./public/uploads/");
