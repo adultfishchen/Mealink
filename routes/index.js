@@ -369,19 +369,6 @@ var upload = multer({
 	storage: storage
 });
 
-var storage = multer.diskStorage({
-	destination: function(req, file, cb){
-		cb(null,"./public/uploads/");
-	},
-	filename: function(req, file, cb){
-		cb(null, file.originalname);
-	},
-	
-});
-
-var upload = multer({
-	storage: storage
-});
 
 //Post User Avatar
 router.post("/users/:id", middleware.checkUserOwnership, upload.single("user[avatar]"), function(req, res, next) {
@@ -438,32 +425,30 @@ User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) 
 	});
 });    
 
-router.put("/api/users/basic/:id", function(req, res) {
-	if(req.file !== undefined)
-	{
-		var newvalues = { $set: { avatar: "/uploads/" + req.file.filename } };	
-	User.findByIdAndUpdate(req.params.id, req.body.user, newvalues, function(err, UpdatedUser) {   
-			if(err) {
-				res.status(401).send({
-						message:"Somethinig went wrong",
-						status: "fail"
-					});
-			} else {
-				res.status(200).send({
-						message: {user: UpdatedUser},
-						status: "success"
-					});
-			}
-						   
-		});
-	}else {
-		res.status(404).send({
+router.put("/api/users/basic/:id", function(req, res,next) {
+if(req.body.user !== null){
+	User.findByIdAndUpdate(req.params.id, req.body.user, function(err, NewupUser) {   
+	if(err) {
+			res.status(401).send({
 					message:"Somethinig went wrong",
 					status: "fail"
 				});
-	}	
-
+		} else {
+			res.status(200).send({
+					message: {user: NewupUser},
+					status: "success"
+				});
+		}
+	});
+} else {
+	res.status(401).send({
+					message:"Somethinig went wrong",
+					status: "fail"
+				});
+}
+	
 });
+
 
 
 //Delete route which also removes from db
