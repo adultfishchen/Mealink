@@ -425,9 +425,8 @@ User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) 
 	});
 });    
 
-router.put("/api/users/basic/:id", function(req, res,next) {
-if(req.body.user !== null){
-	User.findByIdAndUpdate(req.params.id, req.body.user, function(err, NewupUser) {   
+router.post("/api/users/basic/:id", function(req, res, next) {
+User.findByIdAndUpdate(req.params.id, req.body.user, function(err, NewupUser) {   
 	if(err) {
 			res.status(401).send({
 					message:"Somethinig went wrong",
@@ -440,13 +439,6 @@ if(req.body.user !== null){
 				});
 		}
 	});
-} else {
-	res.status(401).send({
-					message:"Somethinig went wrong",
-					status: "fail"
-				});
-}
-	
 });
 
 
