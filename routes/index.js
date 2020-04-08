@@ -176,75 +176,75 @@ router.get("/logout", function(req, res){
 	console.log(req.body);
 });
 
-// 	//card route
-// router.get("/card", function(req, res) {	
-// 	res.locals.user =req.user;
-// 	var u1 = req.user;
-// 	var u1_id = u1._id;
-// 	console.log(u1_id);
-// 	// var catchusers = User.find({ "_id": { $ne:u1_id }}).select('_id');
+	//card route
+router.get("/card", function(req, res) {	
+	res.locals.user =req.user;
+	var u1 = req.user;
+	var u1_id = u1._id;
+	console.log(u1_id);
+	// var catchusers = User.find({ "_id": { $ne:u1_id }}).select('_id');
 
-// 	var all_users = User.find({ "_id": { $ne:u1_id }});
-// 		// Get the count of all users
-// 		// User.countDocuments().exec(function (err, count) {
+	var all_users = User.find({ "_id": { $ne:u1_id }});
+		// Get the count of all users
+		// User.countDocuments().exec(function (err, count) {
 
-// 		var count = all_users.count();
-// 		console.log(count);
+		var count = all_users.count();
+		console.log(count);
 
-// 		if (count == 0)
-// 		{
-// 			req.flash("error", "No users");
-// 		}
-// 		else{
-
-
-// 		// Get a random entry
-// 		var random = Math.floor(Math.random() * count);
-// 		// Again query all users but only fetch one offset by our random #
-// 		User.findOne({ "_id": { $ne:u1_id }}).skip(random).exec(
-// 		// Tada! random user
-// 		function (err, result) {
-// 			if(err) {
-// 				req.flash("error", "Something went wrong, please try again");
-// 			} else {
+		if (count == 0)
+		{
+			req.flash("error", "No users");
+		}
+		else{
 
 
-// 				Chat.findOne({$or:
-// 					   [
-// 						{$and:[{user1: u1_id}, {user2: result._id}]},{$and:[{user1: result._id}, {user2: u1_id}]}
-// 					   ]
-// 					 }).exec(function(err, chatroom){	
-// 							if(err) {
-// 								req.flash("error", "(No Chat)Something went wrong, please try again");
-// 							} else {
+		// Get a random entry
+		var random = Math.floor(Math.random() * count);
+		// Again query all users but only fetch one offset by our random #
+		User.findOne({ "_id": { $ne:u1_id }}).skip(random).exec(
+		// Tada! random user
+		function (err, result) {
+			if(err) {
+				req.flash("error", "Something went wrong, please try again");
+			} else {
+
+
+				Chat.findOne({$or:
+					   [
+						{$and:[{user1: u1_id}, {user2: result._id}]},{$and:[{user1: result._id}, {user2: u1_id}]}
+					   ]
+					 }).exec(function(err, chatroom){	
+							if(err) {
+								req.flash("error", "(No Chat)Something went wrong, please try again");
+							} else {
 
 
 
-// 								if ( chatroom === null)
-// 								{
-// 								 var chatroom = new Chat ({
-// 								  user1: u1_id,
-// 								  user2: result._id
-// 								});
-// 								chatroom.save();
-// 								}
-// 								console.log(chatroom);
+								if ( chatroom === null)
+								{
+								 var chatroom = new Chat ({
+								  user1: u1_id,
+								  user2: result._id
+								});
+								chatroom.save();
+								}
+								console.log(chatroom);
 
-// 								var chat_id = chatroom._id;
+								var chat_id = chatroom._id;
 
-// 								console.log(chat_id);
+								console.log(chat_id);
 
-// 								res.render("showcard", {user: result, chat_id:chat_id});
-// 							}
+								res.render("showcard", {user: result, chat_id:chat_id});
+							}
 
-// 				});	
+				});	
 
 
-// 				}	
-// 			});
-// 		}
-// 		// });
-// 	});
+				}	
+			});
+		}
+		// });
+	});
 
 // router.get("/api/card", function(req, res) {	
 // 	res.locals.user =req.user;
@@ -426,7 +426,8 @@ User.findByIdAndUpdate(req.params.id, req.body.user, function(err, UpdatedUser) 
 });    
 
 router.post("/api/users/basic/:id", function(req, res, next) {
-User.findByIdAndUpdate(req.params.id, req.body.user, function(err, NewupUser) {   
+	
+	User.findByIdAndUpdate(req.params.id, req.body.user, function(err, NewupUser) {   
 	if(err) {
 			res.status(401).send({
 					message:"Somethinig went wrong",

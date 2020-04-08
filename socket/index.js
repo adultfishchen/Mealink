@@ -6,7 +6,7 @@ class SocketHander {
     }
 
     connect() {
-        this.db = require('mongoose').connect("mongodb+srv://mealinkteam:000Aa000@mealink-ff8yw.mongodb.net/test?retryWrites=true&w=majority",{useNewUrlParser: true, 
+        this.db = require('mongoose').connect("mongodb://127.0.0.1:27017/mealinktesting_project",{useNewUrlParser: true, 
  useUnifiedTopology: true});
         this.db.Promise = global.Promise;
     }

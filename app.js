@@ -19,8 +19,8 @@ var express               = require("express"),
     io                    = require("socket.io")(server),
 	SocketHander          = require('./socket/index'),	
 	indexRoutes      	  = require("./routes/index");
-
-var url = process.env.DATABASEURL || "mongodb://localhost:27017/mealinktesting_project";
+	// localhost:27017
+var url = "mongodb://127.0.0.1:27017/mealinktesting_project";
 mongoose.connect(url,
 {useNewUrlParser: true, 
  useUnifiedTopology: true, 
