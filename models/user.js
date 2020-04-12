@@ -33,7 +33,9 @@ var UserSchema = new mongoose.Schema({
 	title: { type: Array, default: ["創業", "遊戲","寵物","穿搭","追星","攝影","美食","影劇","音樂","運動"] },
 	select:{ type: Array, default: [false, false, false, false, false, false, false, false, false, false] }
   },
-  reservation: { type: Boolean, default: false }
+  reservation: { type: Boolean, default: false },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date
 });
 
 console.log(UserSchema);
