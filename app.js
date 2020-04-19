@@ -134,7 +134,7 @@ app.use(function (err, req, res, next) {
 
 var port = process.env.PORT || 3000;
 server.listen(port, function() { 
-  console.log("Server listening on port 3000 and test project has started");
+  console.log("Server listening on port 3000 and test project has started!!");
 }); 
 
 module.exports = app;

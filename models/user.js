@@ -27,7 +27,7 @@ var UserSchema = new mongoose.Schema({
   //     { title: {type: String, default:"音樂", required: true}, select: { type: Boolean, default: false, required: true } },
   //     { title: {type: String, default:"運動", required: true}, select: { type: Boolean, default: false, required: true } }
   //   ],
-  match: { type: String },
+  match: { type: String, default:null },
   matchHabies:
   {
 	title: { type: Array, default: ["創業", "遊戲","寵物","穿搭","追星","攝影","美食","影劇","音樂","運動"] },
