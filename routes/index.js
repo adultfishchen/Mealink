@@ -751,13 +751,13 @@ router.get("/api/chat/:user1id/:user2id", function (req, res) {
       });
     } else if (chatroom === null) {
          var chatroom = new Chat ({
-          user1: u1_id,
-          user2: result._id
+          user1: user1id,
+          user2: user2id
         });
         chatroom.save();
-
+		var chat_id = chatroom._id;
         res.status(200).send({
-          message: "Established a chatroom",
+          message: { chatid: chat_id },
           status: "success",
         });
       } else {
