@@ -58,7 +58,7 @@ router.post("/register", function (req, res) {
       service: "gmail",
       auth: {
         user: "mealinkteam@gmail.com",
-        pass: process.env.GMAILPW,
+        pass: process.env.GMAILPAW,
       },
     });
 
@@ -121,7 +121,7 @@ router.post("/api/register", function (req, res) {
       service: "gmail",
       auth: {
         user: "mealinkteam@gmail.com",
-        pass: process.env.GMAILPW,
+        pass: process.env.GMAILPAW,
       },
     });
     smtpTransport.sendMail(
@@ -750,28 +750,28 @@ router.get("/api/chat/:user1id/:user2id", function (req, res) {
         status: "fail",
       });
     } else if (chatroom === null) {
-         var chatroom = new Chat ({
-          user1: user1id,
-          user2: user2id
-        });
-        chatroom.save();
-		var chat_id = chatroom._id;
-        res.status(200).send({
-          message: { chatid: chat_id },
-          status: "success",
-        });
-      } else {
-        console.log(chatroom);
+      var chatroom = new Chat({
+        user1: user1id,
+        user2: user2id,
+      });
+      chatroom.save();
+      var chat_id = chatroom._id;
+      res.status(200).send({
+        message: { chatid: chat_id },
+        status: "success",
+      });
+    } else {
+      console.log(chatroom);
 
-        var chat_id = chatroom._id;
+      var chat_id = chatroom._id;
 
-        console.log(chat_id);
+      console.log(chat_id);
 
-        res.status(200).send({
-          message: { chatid: chat_id },
-          status: "success",
-        });
-      }
+      res.status(200).send({
+        message: { chatid: chat_id },
+        status: "success",
+      });
+    }
   });
 });
 
@@ -820,11 +820,12 @@ router.get("/chat/:chatid/:userid", function (req, res) {
 });
 
 router.put("/api/users/reserve/:id", function (req, res, next) {
-  if (req.body.user.reservation === false) {
-    req.body.user.reservation = true;
-  } else {
-    req.body.user.reservation = false;
-  }
+  // if (req.body.user.reservation === false) {
+  //   req.body.user.reservation = true;
+  // }
+  // if (req.body.user.reservation === true) {
+  //   req.body.user.reservation = false;
+  // }
 
   User.findByIdAndUpdate(req.params.id, req.body.user, function (
     err,
