@@ -726,22 +726,33 @@ router.get("/api/time", function (req, res) {
 });
 
 //get chat
-router.get("/api/chat/:user1id/:user2id", function (req, res) {
+router.get("/api/chat/:id", function (req, res) {
   // var userid = (req.params.userid).split(':');
 
-  var user1id = mongoose.Types.ObjectId(req.params.user1id);
+  var user1id = mongoose.Types.ObjectId(req.params.id);
 
-  var user2id = mongoose.Types.ObjectId(req.params.user2id);
+  // var user2id = mongoose.Types.ObjectId(req.params.user2id);
 
   // res.status(200).send({
   // 				message:{user1id:user1id, user2id:user2id},
   // 				status: "success"
   // 			});
-
+  var matchUser = [];
+  var d = new Date();
+  var now = d.getDate();
+  User.findById(user1id, function (err, cUser) {
+    if (err) {
+      req.flash("error", "Something went wrong, please try again");
+    } else {
+      for(i=0 ; i< cUser.match.length; i ++){
+        matchUser.push(cUser.match[i]);   
+      }
+    }
+  });
   Chat.findOne({
-    $or: [
-      { $and: [{ user1: user1id }, { user2: user2id }] },
-      { $and: [{ user1: user2id }, { user2: user1id }] },
+    $and: [
+      ({ $or: [{ user1: user1id }, { user2: user1id },{ user3: user1id },{ user4: user1id },{ user5: user1id }] }),
+      ({ $or: [{ time1: now }, {time2: now }] }),
     ],
   }).exec(function (err, chatroom) {
     if (err) {
@@ -750,9 +761,19 @@ router.get("/api/chat/:user1id/:user2id", function (req, res) {
         status: "fail",
       });
     } else if (chatroom === null) {
+     var user2id = matchUser[0];
+     var user3id = matchUser[1];
+     var user4id = matchUser[2];
+     var user5id = matchUser[3];
+
       var chatroom = new Chat({
         user1: user1id,
         user2: user2id,
+        user3: user3id,
+        user4: user4id,
+        user5: user5id,
+        time1:now,
+        time2:now+1
       });
       chatroom.save();
       var chat_id = chatroom._id;

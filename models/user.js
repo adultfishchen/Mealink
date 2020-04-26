@@ -7,7 +7,8 @@ var UserSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
   avatar: { type: String, default: "/uploads/image.jpg" },
   password: String,
-  department: { type: String, default: "My major" },
+  department: { type: String, default: "其他" },
+  Matchdepartment: { type: String, default: "都好"},
   introduction: { type: String, default: "Hello~I'm...." },
   habies: 
     {
@@ -27,7 +28,7 @@ var UserSchema = new mongoose.Schema({
   //     { title: {type: String, default:"音樂", required: true}, select: { type: Boolean, default: false, required: true } },
   //     { title: {type: String, default:"運動", required: true}, select: { type: Boolean, default: false, required: true } }
   //   ],
-  match: { type: String, default:null },
+  match: { type: Array, default:[]},
   matchHabies:
   {
 	title: { type: Array, default: ["創業", "遊戲","寵物","穿搭","追星","攝影","美食","影劇","音樂","運動"] },
@@ -35,7 +36,8 @@ var UserSchema = new mongoose.Schema({
   },
   reservation: { type: Boolean, default: false },
   resetPasswordToken: String,
-  resetPasswordExpires: Date
+  resetPasswordExpires: Date,
+  number: {type: int}
 });
 
 console.log(UserSchema);
