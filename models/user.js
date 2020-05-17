@@ -37,7 +37,8 @@ var UserSchema = new mongoose.Schema({
   reservation: { type: Boolean, default: false },
   resetPasswordToken: String,
   resetPasswordExpires: Date,
-  number: {type: int}
+  number: {type: Number},
+  friends:{ type: Array, unique: true, default:[]}
 });
 
 console.log(UserSchema);
