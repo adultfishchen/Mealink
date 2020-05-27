@@ -103,27 +103,6 @@ router.post("/api/login", function (req, res) {
   })(req, res);
 });
 
-router.put(
-  "/users/:id",
-  middleware.checkUserOwnership,
-  upload.single("user[avatar]"),
-  function (req, res, next) {
-    if (req.file !== undefined)
-      req.body.user.avatar = "/uploads/" + req.file.filename;
-    User.findByIdAndUpdate(req.params.id, req.body.user, function (
-      err,
-      UpdatedUser
-    ) {
-      if (err) {
-        req.flash("error", "Something went wrong, please try again");
-      } else {
-        req.flash("success", "Your profile has been updated");
-        res.redirect("/users/" + req.params.id);
-      }
-    });
-  }
-);
-
 //user's avatar push api
 router.post("/api/users/avatar/:id", upload.single("user[avatar]"), function (
   req,
@@ -368,39 +347,6 @@ router.get("/api/time", function (req, res) {
   });
 });
 
-//chatroom routes
-router.get("/chat/:chatid/:userid", function (req, res) {
-
-  res.locals.user = req.user;
-  var nuser = req.user;
-
-  User.findById(nuser._id, function (err, user1) {
-    if (err) {
-      req.flash("error", "Not found");
-    } else {
-      var user_1 = { id: user1._id, name: user1.username, pic: user1.avatar };
-
-      User.findById(req.params.userid, function (err, user2) {
-        if (err) {
-          req.flash("error", "Not found");
-        } else {
-          var user_2 = {
-            id: user2._id,
-            name: user2.username,
-            pic: user2.avatar,
-          };
-
-          res.render("chat", {
-            chat_id: req.params.chatid,
-            user1: user_1,
-            user2: user_2,
-          });
-        }
-      });
-    }
-  });
-
-});
 
 //get chatroom api
 router.get("/api/chat/:id", function (req, res) {
