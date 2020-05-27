@@ -78,6 +78,16 @@ router.post("/api/register", function (req, res) {
   }
 });
 
+//Handle login logic
+router.post("/login", function (req, res, next) {
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+    failureFlash: "Invalid email or password.",
+    successFlash: "Welcome back to the mealink!! ",
+  })(req, res);
+});
+
 //login api
 router.post("/api/login", function (req, res) {
   passport.authenticate("local", function (err, user, info) {
