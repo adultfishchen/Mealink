@@ -9,6 +9,7 @@ var express = require("express"),
   logger = require("morgan"),
   cookieParser = require("cookie-parser"),
   mongoose = require("mongoose"),
+  flash = require("connect-flash"),
   passport = require("passport"),
   LocalStrategy = require("passport-local"),
   passportLocalMongoose = require("passport-local-mongoose"),
@@ -17,7 +18,6 @@ var express = require("express"),
   io = require("socket.io")(server),
   SocketHander = require("./socket/index"),
   indexRoutes = require("./routes/index");
-
 // localhost:27017
 var url = "mongodb://127.0.0.1:27017/mealinktesting_project";
 mongoose.connect(url, {
@@ -26,7 +26,6 @@ mongoose.connect(url, {
   useCreateIndex: true,
 });
 
-//socket connect
 io.on("connection", async (socket) => {
   console.log("a user connected");
   const clients = await io.engine.clientsCount;
@@ -57,6 +56,10 @@ io.on("connection", async (socket) => {
   });
 });
 
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+// uncomment after placing your favicon in /public
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger("dev"));
 app.use(cookieParser());
 mongoose.set("useFindAndModify", false);
@@ -65,6 +68,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressSanitizer());
 app.use(methodOverride("_method"));
+app.use(flash());
 
 app.all("*", function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -85,9 +89,10 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+// passport.use(new LocalStrategy(User.authenticate()));
 passport.use(
   new LocalStrategy({ usernameField: "email" }, User.authenticate())
-); // use email as primary field
+);
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
