@@ -103,6 +103,34 @@ router.post("/api/login", function (req, res) {
   })(req, res);
 });
 
+//Edit user GET
+router.get("/users/:id/edit", middleware.checkUserOwnership, function (
+  req,
+  res
+) {
+  User.findById(req.params.id, function (err, editUser) {
+    if (err) {
+      req.flash("error", "Something went wrong, please try again");
+    } else {
+      res.render("edit", { user: editUser });
+    }
+  });
+});
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./public/uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+var upload = multer({
+  storage: storage,
+});
+
+
 //user's avatar push api
 router.post("/api/users/avatar/:id", upload.single("user[avatar]"), function (
   req,
